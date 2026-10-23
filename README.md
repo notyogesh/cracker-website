@@ -36,6 +36,20 @@ switch to migrations (`pnpm payload migrate:create` / `pnpm payload migrate`).
 | `src/app/(frontend)/order/[orderNumber]` | Confirmation page with a pre-filled WhatsApp message |
 | `src/app/sitemap.ts`, `src/app/robots.ts` | Sitemap and robots.txt |
 
+## Deploy to Vercel
+
+1. **Database:** Vercel → project → Storage → add **Neon** (Postgres) and connect it. This sets `DATABASE_URL`.
+2. **Images:** Storage → add **Blob** and connect it. This sets `BLOB_READ_WRITE_TOKEN`.
+3. **Environment variables** (Settings → Environment Variables): `PAYLOAD_SECRET` (long random string) and
+   `NEXT_PUBLIC_SITE_URL` (e.g. `https://yourdomain.in`).
+4. Deploy. The `vercel-build` script runs `payload migrate` (creates/updates tables) and then `next build`.
+5. **Load the catalogue once** from your computer: put the Neon `DATABASE_URL` and the `BLOB_READ_WRITE_TOKEN`
+   in `.env.production.local` (git-ignored), then in PowerShell:
+   `$env:NODE_ENV="production"; pnpm import:mkbro`. Photos upload to Blob. Then create the admin user at
+   `/admin` on the live site and fill in Shop settings.
+
+Schema changes: edit collections, run `pnpm migrate:create <name>`, commit the new file in `src/migrations`.
+
 ## Product photos
 
 `pnpm images:clean <input-dir> <output-dir>` turns phone photos into catalogue images: AI background

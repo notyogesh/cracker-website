@@ -7,7 +7,7 @@ import { BuyOnWhatsApp } from '@/components/BuyOnWhatsApp'
 import { QuantityInput } from '@/components/cart/QuantityInput'
 import { JsonLd } from '@/components/JsonLd'
 import { ProductCard, ProductImage, toCartProduct } from '@/components/ProductCard'
-import { discountPercent, formatINR, siteURL } from '@/lib/format'
+import { absoluteURL, discountPercent, formatINR, siteURL } from '@/lib/format'
 import {
   categoryOf,
   getProductByOldSlug,
@@ -201,7 +201,7 @@ export default async function ProductPage({ params }: Props) {
           url,
           ...(product.code ? { sku: product.code } : {}),
           ...(product.description ? { description: product.description } : {}),
-          ...(image?.url ? { image: [`${siteURL()}${image.url}`] } : {}),
+          ...(image?.url ? { image: [absoluteURL(image.url)] } : {}),
           ...(category ? { category: category.name } : {}),
           ...(product.manufacturer ? { brand: { '@type': 'Brand', name: product.manufacturer } } : {}),
           ...(specs.length

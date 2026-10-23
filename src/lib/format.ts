@@ -10,3 +10,6 @@ export const discountPercent = (mrp: number, price: number) =>
   mrp > 0 ? Math.round(((mrp - price) / mrp) * 100) : 0
 
 export const siteURL = () => (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, '')
+
+// Uploads are relative (/api/media/…) locally and full Blob URLs in production.
+export const absoluteURL = (url: string) => (/^https?:\/\//.test(url) ? url : `${siteURL()}${url}`)

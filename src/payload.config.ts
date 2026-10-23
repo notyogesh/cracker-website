@@ -1,5 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -36,7 +37,18 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URL || '',
     },
+    // Dev pushes schema changes automatically; production (Vercel) applies
+    // these migrations in the `vercel-build` script.
+    migrationDir: path.resolve(dirname, 'migrations'),
   }),
   sharp,
-  plugins: [],
+  plugins: [
+    // Uploads go to Vercel Blob when a token is set (production); locally they stay in /media.
+    vercelBlobStorage({
+      enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
+      // Serve files straight from the Blob CDN instead of through the app.
+      collections: { media: { disablePayloadAccessControl: true } },
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+    }),
+  ],
 })
