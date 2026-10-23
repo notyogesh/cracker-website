@@ -46,6 +46,9 @@ export default buildConfig({
     // Uploads go to Vercel Blob when a token is set (production); locally they stay in /media.
     vercelBlobStorage({
       enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
+      // Keep the plugin's columns in the schema even when disabled, so local
+      // migrations match production.
+      alwaysInsertFields: true,
       // Serve files straight from the Blob CDN instead of through the app.
       collections: { media: { disablePayloadAccessControl: true } },
       token: process.env.BLOB_READ_WRITE_TOKEN,
